@@ -1,5 +1,3 @@
-# metagenomics
-
 <span style="font-weight:500;font-size:14px">
 
 # <b>General workflow for the analysis of (meta)genomic data</b>
