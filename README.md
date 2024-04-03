@@ -1,12 +1,10 @@
 <span style="font-weight:500;font-size:14px">
 
 # <b>General workflow for the analysis of microbial (meta)genomic data</b>
-#### Poppy J. Hesketh-Best,                                   September 2022
+#### last update: 2024-04-03
 ###### (depending on when you read this repository, it may now be out of date! Make sure you stay up-to-date with the literature and check the GitHub pages of the software)
 
-This is not a tutorial of how to analyse your metagenomic data, or how to work in the HPC/Pegasus/CLIMB or with command line interfaces. This is a workflow to help guide you through the process of which software to look to use for each step and what the actual steps are.
-
-I only demonstrate the base commands utilised to run the software mentioned, you should be reading the GitHub/CodeForge/Website for all these software to understand how they work and all the additional parameters that can be applied to them that are more appropriate for your data.
+This is not a tutorial of how to analyse your metagenomic data, or how to work in the HPC/Pegasus/CLIMB or with command line interfaces. This is a workflow to help guide you through the process of which software to look to use for each step and what the steps are. This page demonstrates the base commands utilised to run the software mentioned, you should be reading the GitHub/CodeForge/Website for all these software to understand how they work and all the additional parameters that can be applied to them that are more appropriate for your data.
 
 ## Index
 
@@ -21,32 +19,32 @@ I only demonstrate the base commands utilised to run the software mentioned, you
     1.4. [Nanopore data](#sec1.4)</br>
     1.5. [NCBI data](#sec1.5)<br/>
 2. [(Meta)genomic Assembly](#sec2)<br/>
-   2.1. [Software](#sec2.1)<br/>
-   2.2. [Illumina](#sec2.2)<br/>
-   2.3. [Nanopore](#sec2.3)<br/>
-   2.4. [NCBI data](#sec2.4)<br/>
+    2.1. [Software](#sec2.1)<br/>
+    2.2. [Illumina](#sec2.2)<br/>
+    2.3. [Nanopore](#sec2.3)<br/>
+    2.4. [NCBI data](#sec2.4)<br/>
 3. [Mapping](#sec3)<br/>
-   3.1. [Software](#sec3.1)<br/>
-   3.2. [Illumina](#sec3.2)<br/>
-   3.3. [Nanopore](#sec3.3)<br/>
-   3.4. [Basic Samtools usage](#sec3.4)<br/>
+    3.1. [Software](#sec3.1)<br/>
+    3.2. [Illumina](#sec3.2)<br/>
+    3.3. [Nanopore](#sec3.3)<br/>
+    3.4. [Basic Samtools usage](#sec3.4)<br/>
 4. [Binning metagenomic contigs/recovering MAGs](#sec4)<br/>
-   4.1. [Software](#sec4.1)<br/>
-   4.2. [CONCOCT](#sec4.2)<br/>
-   4.3. [MaxBin2](#sec4.3)<br/>
-   4.4. [MetaBAT2](#sec4.4)<br/>
-   4.5. [MetaWRAP `bin_refinement`](#sec4.4)<br/>
-   4.6. [Other](#sec4.4)<br/>
+    4.1. [Software](#sec4.1)<br/>
+    4.2. [CONCOCT](#sec4.2)<br/>
+    4.3. [MaxBin2](#sec4.3)<br/>
+    4.4. [MetaBAT2](#sec4.4)<br/>
+    4.5. [MetaWRAP `bin_refinement`](#sec4.4)<br/>
+    4.6. [Other](#sec4.4)<br/>
 5. [Binning metagenomic viral contigs into vMAGs](#sec5)<br/>
-   5.1. [Software](#sec5.1)<br/>
-   5.2. [Identifying viral contigs](#sec5.2)<br/>
-   5.3. [Binning viral contigs](#sec5.3)<br/>
-   5.4. [Assessing vMAGs](#sec5.4)</br>
+    5.1. [Software](#sec5.1)<br/>
+    5.2. [Identifying viral contigs](#sec5.2)<br/>
+    5.3. [Binning viral contigs](#sec5.3)<br/>
+    5.4. [Assessing vMAGs](#sec5.4)</br>
 6. [Annotating (meta)genomes/MAGs](#sec6)<br/>
-   6.1. [Software](#sec6.1)<br/>
-   6.2. [Command line annotation](#sec6.2)<br/>
-   6.3. [Manual annotation](#sec6.3)<br/>
-   6.4. [Visualisation](#sec6.4)</br>
+    6.1. [Software](#sec6.1)<br/>
+    6.2. [Command line annotation](#sec6.2)<br/>
+    6.3. [Manual annotation](#sec6.3)<br/>
+    6.4. [Visualisation](#sec6.4)</br>
 7. [Taxonomic classification of raw reads, contigs and MAGs</b>](#sec7)</br>
     7.1. [Raw reads and contig taxonomy](#sec7.1)</br>
     7.2. [MAG taxonomy](#sec7.2)</br>
@@ -61,31 +59,31 @@ I only demonstrate the base commands utilised to run the software mentioned, you
 <a name="sec0"></a>
 ## <b>0. Metagenomics data analysis considerations</b>
 So before you do any sequencing and analysis you should have an idea of how you are going to process potentially 100's of Gigabytes of data. Some questions you might want to be asking yourself:
-- How many biological replicas do I have? Am I going to co-assemble (join all your reads as biological/technical replicas and assemble them together) or assemble individually?
-- Do I want/need metagenome assembled genomes (MAGs) to answer/address my research questions? Is functional/taxonomical information from contigs sufficient for my study?
-- Will I potentially have host DNA in my sample? Is there a host genome i can use to try and remove as much as possible? There isn, how can I mitigate this issue?
+- How many biological replicas do I have? Am I going to co-assemble (join all your reads as biological/technical replicas and assemble them together) or assemble them individually?
+- Do I want/need metagenome-assembled genomes (MAGs) to answer/address my research questions? Is functional/taxonomical information from contigs sufficient for my study?
+- Will I have host DNA in my sample? Is there a host genome available I can use to remove as much host DNA as possible? If there isn't, how can I mitigate this issue (related organism)?
 - Am I going to use a metagenomic analysis pipeline aggregator like MetaWRAP or Anvi'o or do all my analysis, or am I going to process it myself?
 
-Some of these questions are easier to answer than others, but as with most metagneomic studies, tehre is no real golden rule/pathway to follow. Plan your rought pipeline before you start any analysis (it's fine if it changes because you needed to find alternate software that works or is more approaporiate for your data, ect.) - but you should have a vague roadmap of what you intend to do with this data, but will also help you identify potential caviats with your pipeline.
+Some of these questions are easier to answer than others, but as with most metagenomic studies, there is no real golden rule/pathway to follow. Plan your rough workflow before you start any analysis (it's fine if it changes because you need to find alternate software that works or is more appropriate for your data, or you take an alternative direction, ect.) - but you should have a vague roadmap of what you intend to do with this data, and wht type of data you will have at the end for plotting and statistical analysis. But will also help you identify potential caveats with your pipeline.
 
 <a name="sec0.1"></a>
 ### <u> 0.1. Project file structure</u>
-One essential element of your analysis is keeping a strick file structions (It can be hard to be concsistent, and I mess this up a lot and always regret it). Below is one example of how yoyu might want to go about structuring your project.
+One essential element of your analysis is keeping a strict file structure (It can be hard to be consistent, and I mess this up a lot and always regret it). Below is one example of how you might want to go about structuring your project. This is just an option, everyone has their own way of organising data. However, you want to do it so that if someone looked at your project file in five years with your lab book/paper, they can follow what you did and redo the same analysis. You may have to spend a few days organising your data at the end of the project, but this step is so important for yourself, future lab members, and broader colleagues wanting to revisit your data.
 
 ```
-Project |  README.txt # brief summary of project and data contained within
-        |  raw_data     | raw_reads | Sample001.R1.fastq.gz
-                                    | Sample001.R2.fastq.gz
-                                    | Sample002._R1.fastq.gz
-                                    | Sample002._R2.fastq.gz
-                        | QC_reads  | Sample001_CLEAN-READS.R1.fastq.gz
-                                    | Sample001_CLEAN-READS.R2.fastq.gz
-                                    | Sample002_CLEAN-READS.R1.fastq.gz
-                                    | Sample002_CLEAN-READS.R2.fastq.gz
+Project |  README.txt # summary of project and data contained within, the stage/status of the project, etc..
+        |  raw_data     | raw_reads | Sample001_R1.fastq.gz
+                                    | Sample001_R2.fastq.gz
+                                    | Sample002_R1.fastq.gz
+                                    | Sample00_R2.fastq.gz
+                        | QC_reads  | Sample001_CLEAN-READS_R1.fastq.gz
+                                    | Sample001_CLEAN-READS_R2.fastq.gz
+                                    | Sample002_CLEAN-READS_R1.fastq.gz
+                                    | Sample002_CLEAN-READS_R2.fastq.gz
         |  analysis     | assembly  | Sample001_contigs.fa
                                     | Sample002_contigs.fa
                         | mapping   | Sample001_contigs.bam
-                                    | Sample001_contigs.bam.i
+                                    | Sample001_contigs.bam.bai
                         | binning
                         | MAG_refinement
                         | taxonomy_profiling
@@ -101,14 +99,10 @@ Project |  README.txt # brief summary of project and data contained within
                         | mapping.sh
 
 ```
-You want to do it so that if someone looked at it in five years with your notes/paper, they can follow what you did and redo the same analysis. You may have to spend a few days organising your data at the end of the project, but this step is so important.
 
 <a name="sec0.2"></a>
 ### <u> 0.2. Co-assembly</u>
-
-"Co-assembly" refers to assembling contigs using the reads from multiple samples as the input. This is valuable if you have technical replicas, as it will improve the overall sequencing depth of your contigs. You can also use it for biological replicas with the same possible outcome. The more metagenomes you have co-assembled, the more likely you might begin to start accurately representing the environmental/human sample you are sequencing. However, this does come with some assumptions, such that all the samples share the same functional and taxonomical diversity and will hide any between-sample variation.
-
-If you are undecided as to whether you should co-assemble, and you have the resources and time, just try both and inspect the differences between them. That will help you decide if it is appropriate for your data. Ensure you are using the right assembler, SPAdes does not recommend co-assembly, while MEGAHIT is good for it.
+"Co-assembly" refers to assembling contigs using the reads from multiple samples as the input. This is valuable if you have technical replicas, as it can improve the overall sequencing depth of your contigs. You can also use it for biological replicas. The more metagenomes you have co-assembled, the more likely you might begin to start accurately representing the environmental/human sample you are sequencing. However, this does come with some assumptions, such that all the samples share the same functional and taxonomical diversity, this will hide any between-sample variation. If you are undecided on co-assembly, and you have the resources and time, try both and inspect the differences between them. That will help you decide if it is appropriate for your data. Ensure you are using the right assembler, SPAdes does not recommend co-assembly, while MEGAHIT can perform it. 
 
 <a name="sec0.3"></a>
 ### <u> 0.3. Metagenome assembled-genomes (MAGs) and viral MAGs (vMAGs)</u>
@@ -129,13 +123,11 @@ MAGs can be improved by re-assembling them (look to <i>MetaWRAPs bin_reassembly<
 ---
 <div style="page-break-after: always;"></div>
 
-
 <a name="sec1"></a>
 ## <b>1. Raw reads quality control</b>
 <p align="center">
   <img src="/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/qc_pipe.png"/>
 </p>
-
 
 This section is only interested in the quality control of you (meta)genomic data. The QC step is incredibly important to everything that follows. And it should be done with a lot of consideration to what is going to happen downstream. Dont be affraid to come back and re-assess your read quality if you notice strange things happening with your data.
 
