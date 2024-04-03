@@ -261,7 +261,7 @@ cat rep_ref_refseq.txt | awk -F '\t' '{print $20}' \
     | sed -E 's/^https(.*)(\/.*)/wget ftp\1\2\2_genomic.fna.gz/g' > rep_ref_refseq.sh
 
 ```
-Once you have all the genomes, they will be in their own individual fasta file, it is good to run checkM in order to identify potentially contaminated bacterial genomes and decide wether or not to keep them for downstream analysis. <i>CheckM</i> can do this for you.
+Once you have all the genomes, they will be in their own individual fasta file, it is good to run checkM to identify potentially contaminated bacterial genomes and decide whether or not to keep each genome for downstream analysis. <i>CheckM2</i> can perform this for you.
 ```bash
   checkm lineage_wf <bin folder> <output folder> -t 64
 ```
@@ -273,9 +273,7 @@ This will generate a table that will give you the completeness and contamination
 |genome2|p_Firmicutes|100|295|158|0|293|1|1|0|0|100.0|1.9|
 |genome3|f_Rhodobactereacea|46|654|332|2|610|32|9|1|0|99.6|11.3|
 
-Generally speaking you want your genome Completeness to be >75% and the contamination <10%. In the example above you would keep genome1 and genome2 but remove genome3 as it has contamination above 10%.
-
-If you plan to process a large number of genomes, you may wish to break these into smaller batches. On a 64GB machine running 1,000 genomes at a time with 40 threads works well.
+Generally speaking, you want your genome Completeness to be >75% and the contamination <10%. In the example above you would keep genome1 and genome2 but remove genome3 as it has contamination above 10%.
 
 #### Downloading reads from the SRA database:
 Determine the SRR number and download the data using the <i>SRA Toolkit</i>:
@@ -286,18 +284,16 @@ After you have downloaded the data, you need to convert it from SRAs compressed 
 ```bash
 fastq-dump --outdir path/to/ouput/fastq/ --split-files path/to/sra/SRR925811.sra
 ```
-If its Illumina data you are downloading, this should produce two fastq files (one for R1 and one for R2), and only one for Nanopore/IonTorent.
+If it's Illumina data you are downloading, this should produce two fastq files (one for R1 and one for R2), and only one for Nanopore/IonTorent.
 If you just want to download X number of raw (fastq) reads to standard output from a particular run you can use a command like the following. This can be useful to just take a quick look at some reads, or obtain some reads for testing purposes or just check whether the SRA toolkit is even working for you.
 ```bash
 fastq-dump -X 5 -Z SRR925811
 ```
-To run the whole process is a single long pipe, you could try the following:
+To run the whole process in a single long pipe, you could try the following:
 ```bash
-esearch -db sra -query | efetch --format runinfo | cut -d ',' -f 1 | grep SRR \
-    | xargs fastq-dump --split-files --bzip2
+esearch -db sra -query | efetch --format runinfo | cut -d ',' -f 1 | grep SRR \ | xargs fastq-dump --split-files --bzip2
 ```
 You can then proceed to QC this metagenomic data as described above depending on the sequencing platform the data originated from.
-
 
 ---
 <div style="page-break-after: always;"></div>
@@ -958,7 +954,7 @@ conda create -n db_downloading -c bioconda sra-tools entrez-direct seqkit -y
 
 <a name="sec8.2"></a>
 ### <u>Appendix: Building complex loops</u>
-In much of the code examples of the software used for the analysis I have just demonstrated it with a single sample (i.e. sample001.fasta). This is infrequently how you will be analysing metagenomic data, you will nearly always to work with multiple samples. Loops are an easier way to telling the computer to loop through all the files that meet a certain parameter and run the same analysis on them.
+In many of the code examples of the software used for the analysis, I have just demonstrated it with a single sample (i.e. sample001.fasta). This is infrequently how you will be analysing metagenomic data, you will nearly always to work with multiple samples. Loops are an easier way to tell the computer to loop through all the files that meet a certain parameter and run the same analysis on them.
 
 A simple look  will look like this:
 ```bash
@@ -970,7 +966,7 @@ A simple look  will look like this:
 More often your goal will be a bit more complicated, and possibly require renaming the output to include intermediate files or a different name to the end file. You change modify the loop using `basename`. The advatange of basename is that it will ignore the entire path of the file when you ask it it `echo` (i.e. print) the variable we have called `name#`.
 
 ```bash
-INPUT
+# INPUT
   for file in path/to/file/*.fasta; do
     name1=$(basename $file .fasta)
     echo $name2
@@ -979,7 +975,7 @@ INPUT
     echo $name3
   done
 
-OUTPUT
+# OUTPUT
   $ echo $name2
   # sample001
   $ echo $name2
@@ -988,7 +984,7 @@ OUTPUT
 The way basename is structured is that you specify which part of the name - seperated by a period (`.`) - is to be removed from the variable `name`.
 For example for the file: `sample001.final.contigs.fasta`, running `name=$(basename $file .final.contigs.fasta); echo $name` would print the output `sample001`. Likewise, running `name=$(basename $file contigs.fasta); echo $name` would print  `sample001.final`. So this is great for stacking information to you sample name that informs you at what stage of the analysis that particular sample is at.
 
-Another useful feature of using `basename` is that it removes the entire path of the where `sample001.fasta` is, but still retains that information, so moving the outputs of your files around while simultaneously renaming them becomes straight forward.
+Another useful feature of using `basename` is that it removes the entire path of `sample001.fasta`, but still retains file information, so moving the outputs of your files around while simultaneously renaming them becomes straightforward.
 ```bash
   for file in path/to/file/*.fasta; do
     name1=$(basename $file .fasta)
@@ -998,7 +994,7 @@ Another useful feature of using `basename` is that it removes the entire path of
 
 <a name="sec8.3"></a>
 ### <u>Appendix: Additional software to consider</u>
-Your choice in using a certain software will likely come down to a few reasons: It is approapriate for your data and you could sucesfully download and run it. Software does become outdated and overtaken by something else - often they state this in the gihub page, but not always.
+Your choice in using a certain software will likely come down to a few reasons: It is appropriate for your data type, and, more commonly you could successfully download and run it. The software does become outdated and overtaken by something else - often they state this in the GitHub page, but not always.
 
 | Step | Software | Link |
 | ------ | --------------| --------------|
