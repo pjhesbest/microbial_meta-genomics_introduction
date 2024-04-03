@@ -889,15 +889,20 @@ Running MetaWRAPS bin classification and abundace estimator:
 
 <a name="sec8"></a>
 ## <b>Usefult scripts</b>
-I have compiled a collection of scripts to perform some base functions which can be found in `bin/`. These scripts are meant to be run on a HPC-SLURM system, and as such they are ready for immediate use by sending the script to SLURM - `sbatch script.sh -i $INPUT -o $OUTPUT`. If you do not use a SLURM system or have a separate one, you will need to remove SLURM parameters from the start of the script. They are as follows (in no particular order):
+I have compiled a collection of scripts to perform some base functions which can be found in `bin/`. These scripts are meant to be run on an HPC-SLURM system, and as such they are ready for immediate use by sending the script to SLURM - `sbatch script.sh -i $INPUT -o $OUTPUT`. If you do not use a SLURM system or have a separate one, you will need to remove SLURM parameters from the start of the script. They are as follows (in no particular order):
 ```bash
-
+iq-tree_phylogeny.sh -i genomes.fasta
+iq-tree_phylogeny.sh -i genome.fasta -p prefix
 ```
-
 <a name="sec8.1"></a>
-### <u>Usefult scripts</u>
-
-
+### <u>Phylogeny with IQ-Tree</u>
+This script performs multiple sequence alignment with [MAFFT](https://mafft.cbrc.jp/alignment/software/linux.html), trims ends with [TrimAl](https://github.com/inab/trimal) and reconstructs phylogeny using a GTR model with [IQ-TREE](https://github.com/Cibiv/IQ-TREE)
+```bash
+iq-tree_phylogeny.sh -i genome1.fasta
+iq-tree_phylogeny.sh -i genome1.fasta -p prefix # add a prefix name to output
+# if you just want to reconstruct the tree and not the alignment - for example you job timed-out
+iq-tree_phylogeny.sh -i genomes.fasta -R
+```
 
 ---
 <div style="page-break-after: always;"></div>
