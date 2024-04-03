@@ -1,6 +1,6 @@
 <span style="font-weight:500;font-size:14px">
 
-# <b>General workflow for the analysis of (meta)genomic data</b>
+# <b>General workflow for the analysis of microbial (meta)genomic data</b>
 #### Poppy J. Hesketh-Best,                                   September 2022
 ###### (depending on when you read this repository, it may now be out of date! Make sure you stay up-to-date with the literature and check the GitHub pages of the software)
 
