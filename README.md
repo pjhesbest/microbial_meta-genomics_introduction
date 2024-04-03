@@ -158,7 +158,7 @@ The following can be utilised on both Illumina and MinION sequence data. When yo
 ```
 Once the output <i>FastQC</i> will be a HTML file for each read file that you can open into your web browser and look at the quality of metagenomic sequences.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/fastqc.png)
+![Logo](figures/fastqc.png)
 
 Since this will generate a lot of files and looking through each one individually is an inconvenience, you can aggragate them all with <i>MultiQC</i>. This makes it easier to get an overall idea of the data and identiy  parameters that apply to the dataset as a whole. Generally speaking, if you are going to do something like a co-assembly you will want all your reads of a similar length and quality.
 
