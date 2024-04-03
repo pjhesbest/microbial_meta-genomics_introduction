@@ -126,7 +126,7 @@ MAGs can be improved by re-assembling them (look to <i>MetaWRAPs bin_reassembly<
 <a name="sec1"></a>
 ## <b>1. Raw reads quality control</b>
 <p align="center">
-  <img src="/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/qc_pipe.png"/>
+  <img src="figures/qc_pipe.png"/>
 </p>
 
 This section is only interested in the quality control of you (meta)genomic data. The QC step is incredibly important to everything that follows. And it should be done with a lot of consideration to what is going to happen downstream. Dont be affraid to come back and re-assess your read quality if you notice strange things happening with your data.
