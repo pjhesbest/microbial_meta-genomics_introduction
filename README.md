@@ -2,10 +2,11 @@
 
 # <b>General workflow for the analysis of (meta)genomic data</b>
 #### Poppy J. Hesketh-Best,                                   September 2022
-###### (depending on when you read this it may now be out of date! Make sure you stay you to date with the literature and check the github pages of the software)
-This is not a tutorial of how to analyse your metagenomic data, or how to work in the HPC/Pegasus/CLIMB or with command line interfaces,. This is a workflow to help guide you through the process and which software to look to use for each step and what the actual steps are.
+###### (depending on when you read this repository, it may now be out of date! Make sure you stay up-to-date with the literature and check the GitHub pages of the software)
 
-I only demostrate the base commands utilised to run the software mentioned, you should be reading the github/codeforge/website for all these software to understand how they work and all the additional parameters that can be applied to them that are more approporaite for your data.
+This is not a tutorial of how to analyse your metagenomic data, or how to work in the HPC/Pegasus/CLIMB or with command line interfaces. This is a workflow to help guide you through the process of which software to look to use for each step and what the actual steps are.
+
+I only demonstrate the base commands utilised to run the software mentioned, you should be reading the GitHub/CodeForge/Website for all these software to understand how they work and all the additional parameters that can be applied to them that are more appropriate for your data.
 
 ## Index
 
@@ -94,29 +95,36 @@ Project |  README.txt # brief summary of project and data contained within
         |  results      | final_taxonomy.txt
                         | bin_abundances.txt
                         | functional_profiles.txt
+                        | abundance.mapping.tsv
         |  scripts      | reads_QC.sh
                         | assembly.sh
                         | mapping.sh
 
 ```
-You want to do it so that if someone looked at it in five years time with your notes/paper, they can follow what you did and redo the same analysis. So make sure that is possible. You may end up having to spend a days organising your data, but this is so important.
+You want to do it so that if someone looked at it in five years with your notes/paper, they can follow what you did and redo the same analysis. You may have to spend a few days organising your data at the end of the project, but this step is so important.
 
 <a name="sec0.2"></a>
 ### <u> 0.2. Co-assembly</u>
 
-"Co-assembly" refers to assembling contigs using the reads form multiple samples as the input. This is valuable if you have technical replicas, as it will improve the overall sequencing depth of your contigs. You can also use it for biological replicas with the same possible outcome. The more metagenomes you have co-assembled, the more likely you might begin to start accurately representing the environemental/human sample you are sequencing. However, this does come with some assumptions, such that all the samples share the same functional and taxonomical diversity and will hide any between-sample variation.
+"Co-assembly" refers to assembling contigs using the reads from multiple samples as the input. This is valuable if you have technical replicas, as it will improve the overall sequencing depth of your contigs. You can also use it for biological replicas with the same possible outcome. The more metagenomes you have co-assembled, the more likely you might begin to start accurately representing the environmental/human sample you are sequencing. However, this does come with some assumptions, such that all the samples share the same functional and taxonomical diversity and will hide any between-sample variation.
 
-If you are undecided as to wether you should co-assemble, and you have th resources and time, just try both and inspect the differences between them. That will help you decide if it is appropriate for your data. Ensure you are using the right assembler, SPAdes does not recomend co-assembly, while MEGAHIT is good for it.
+If you are undecided as to whether you should co-assemble, and you have the resources and time, just try both and inspect the differences between them. That will help you decide if it is appropriate for your data. Ensure you are using the right assembler, SPAdes does not recommend co-assembly, while MEGAHIT is good for it.
 
 <a name="sec0.3"></a>
-### <u> 0.3. Metagenome assembled-genomes (MAGs)</u>
-Acord to the European Nucleotide Archive (ENA) a MAGs is "a single-taxon assembly based on one or more binned metagenomes that has been asserted to be a close representation to an actual individual genome (that could match an already existing isolate or represent a novel isolate)." Minimum standards have been proposed for bacterial MAGs [Bowers <i>et al.</i>, 2017 <i>Nat.</i>](https://www.nature.com/articles/nbt.3893).
-
+### <u> 0.3. Metagenome assembled-genomes (MAGs) and viral MAGs (vMAGs)</u>
+According to the European Nucleotide Archive (ENA) a MAGs is "a single-taxon assembly based on one or more binned metagenomes that has been asserted to be a close representation to an actual individual genome (that could match an already existing isolate or represent a novel isolate)." Minimum standards have been proposed for bacterial MAGs ([Bowers <i>et al.</i>, 2017 <i>Nat.</i>](https://www.nature.com/articles/nbt.3893)).
 | Standard | Low-quality | Medium-Quality | High-quality |
 | -------- | ------------| ---------------| ------------ |
 |  [MIMAG](https://www.nature.com/articles/nbt.3893) |  <50% completion, >10% contamination | 50-95% completion, <10% contamination  | >95% completion, <5% contamination  |
 
-These are good standards to keep to when you are making your MAGs and using them for downstream analysis. MAGs can be improved by re-assembling them (look to <i>MetaWRAPs bin_reassembly</i> module for this) but this can cometime increase contamination.
+Additionally, minimum standards have also been proposed for vMAGs ([Roux <I>et al.</i>, 2019 <i>Nat. Biotech.</i>](https://www.nature.com/articles/nbt.4306)).
+| Standard | Genome fragments (low and medium-quality) | High-quality draft | Finished genome |
+| -------- | ------------| ---------------| ------------ |
+| [MIUViG](https://www.nature.com/articles/nbt.4306) | <90% complete, or no estimated genome size (fragment) | >90% complete | Complete genome with extensive annotation |
+
+These are good standards when making your MAGs and using them for downstream analysis. 
+(v)MAG qualities can be assessed using tools such as [checkM2](https://github.com/chklovski/CheckM2) (bacterial) and [checkV](https://bitbucket.org/berkeleylab/checkv/src/master/) (viral).
+MAGs can be improved by re-assembling them (look to <i>MetaWRAPs bin_reassembly</i> module for this) but this can sometimes increase contamination.
 
 ---
 <div style="page-break-after: always;"></div>
