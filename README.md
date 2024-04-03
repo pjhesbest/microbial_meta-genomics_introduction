@@ -162,7 +162,7 @@ Once the output <i>FastQC</i> will be a HTML file for each read file that you ca
 
 Since this will generate a lot of files and looking through each one individually is an inconvenience, you can aggragate them all with <i>MultiQC</i>. This makes it easier to get an overall idea of the data and identiy  parameters that apply to the dataset as a whole. Generally speaking, if you are going to do something like a co-assembly you will want all your reads of a similar length and quality.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/multiQC.png)
+![Logo](figures/multiQC.png)
 
 <a name="sec1.3"></a>
 ### <u>1.3. Illumina data</u>
@@ -199,7 +199,7 @@ If after running <i>BBDuk</i>, or any other read QC software, there are still so
 
 One example of where this can happen is with a polyG tail on your reverse read, this would look like this in <i>fastQC</i>. This is common to Illumina data, but just because you have run a powerfull tool that QC-es your reads in many ways, doesn't mean that those are the best quality data to proceed with. Check again with <i>fastQC</i> after QC/before assembly.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/polyG_tail.png)
+![Logo](figures/polyG_tail.png)
 
 Poly-G tails need to be remove as they will impact on your assembly, this can be done with <i>fastp</i>:
 ```bash
@@ -304,7 +304,7 @@ You can then proceed to QC this metagenomic data as described above depending on
 
 <a name="sec2"></a>
 ## <b>2. (Meta)genomic Assembly</b>
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/assembly_pipe.png)
+![Logo](figures/assembly_pipe.png)
 
 While both types of data again need to be assembled differently (with the exception of hybrid assemblies)
 
@@ -411,7 +411,7 @@ QUAST may be used to generate summary statistics (N50, maximum contig length, GC
 ```
 QUAST will generate a HTML file that you can inspect to see the results of its assesment.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/metaQUAST.png)
+![Logo](figures/metaQUAST.png)
 
 #### <u>Size filter contigs</u>:
 Contigs filtered to remove contigs less that 1kb. <i>seqkit</i> is a multifunctional/crossplaotform tool that is useful to get statistics on your contigs and remove reads less than 1Kb.
@@ -455,7 +455,7 @@ Repeat graphs produced by Flye could be visualized using Bandage. Repeat graph b
 ## <b>3. Mapping reads to contigs</b>
 Long and short-read mappers cant really be used interchangably, so again nanopore and illumina data should be handled seperately here.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/mapping_pipe.png)
+![Logo](figures/mapping_pipe.png)
 
 <a name="sec3.2"></a>
 ### <u>3.2. Software</u>
@@ -512,7 +512,7 @@ With a sorted and index `BAM` file you can extract coverage information that wil
 ## <b>4. Binning metagenomic contigs/recovering MAGs</b>
 Here 3 ways to bin your metagenome bins are described. Each have their own advantages and disadvantages. Finally Also describes is MetaWRAP's `bin_refinement` module that will take bins from multiple binners and create refined bins based on a quality measures (completenes and contamination).
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/binning_pipe.png)
+![Logo](figures/binning_pipe.png)
 
 <a name="sec4.1"></a>
 ### <u>4.1. Software</u>
