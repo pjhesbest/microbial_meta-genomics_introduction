@@ -48,10 +48,10 @@ This is not a tutorial of how to analyse your metagenomic data, or how to work i
 7. [Taxonomic classification of raw reads, contigs and MAGs</b>](#sec7)</br>
     7.1. [Raw reads and contig taxonomy](#sec7.1)</br>
     7.2. [MAG taxonomy](#sec7.2)</br>
-8. [Appendix](#sec8)</br>
-    8.1. [Building `conda` environments for each step](#sec8.1)</br>
-    8.2. [Building complex/nested loops](#sec8.2)</br>
-    8.3. [Additional software to consider](#sec8.3)</br>
+8. [Appendix](#sec9)</br>
+    8.1. [Building `conda` environments for each step](#sec9.1)</br>
+    8.2. [Building complex/nested loops](#sec9.2)</br>
+    8.3. [Additional software to consider](#sec9.3)</br>
 
 ---
 <div style="page-break-after: always;"></div>
@@ -888,8 +888,23 @@ Running MetaWRAPS bin classification and abundace estimator:
 <div style="page-break-after: always;"></div>
 
 <a name="sec8"></a>
-## <b>Appendix</b>
+## <b>Usefult scripts</b>
+I have compiled a collection of scripts to perform some base functions which can be found in `bin/`. These scripts are meant to be run on a HPC-SLURM system, and as such they are ready for immediate use by sending the script to SLURM - `sbatch script.sh -i $INPUT -o $OUTPUT`. If you do not use a SLURM system or have a separate one, you will need to remove SLURM parameters from the start of the script. They are as follows (in no particular order):
+```bash
+
+```
+
 <a name="sec8.1"></a>
+### <u>Usefult scripts</u>
+
+
+
+---
+<div style="page-break-after: always;"></div>
+
+<a name="sec9"></a>
+## <b>Appendix</b>
+<a name="sec9.1"></a>
 ### <u>Appendix: `conda` environments for each step</u>
 When building conda environments, its important to not overload them with too many software, as what can happens is the dependencies of softwareA you donwload to the environment may conflict with softwareB, and now you can no longer properly run softwareB. Bulding and breaking down conda envs is normal, you many have to do this multiple times before you arrive at a good ballance.
 When you have created your conda environment, its good to create a `.yaml` file of the environment - its basically the recipe of how that env is made, and if you mess up the enviornment a week late, you can just use that `.yaml` file to rebuild it env back to the functioning state.
@@ -952,7 +967,7 @@ These are some of the environments that have been working for me for a while.
 conda create -n db_downloading -c bioconda sra-tools entrez-direct seqkit -y
 ```
 
-<a name="sec8.2"></a>
+<a name="sec9.2"></a>
 ### <u>Appendix: Building complex loops</u>
 In many of the code examples of the software used for the analysis, I have just demonstrated it with a single sample (i.e. sample001.fasta). This is infrequently how you will be analysing metagenomic data, you will nearly always to work with multiple samples. Loops are an easier way to tell the computer to loop through all the files that meet a certain parameter and run the same analysis on them.
 
@@ -992,7 +1007,7 @@ Another useful feature of using `basename` is that it removes the entire path of
   done
 ```
 
-<a name="sec8.3"></a>
+<a name="sec9.3"></a>
 ### <u>Appendix: Additional software to consider</u>
 Your choice in using a certain software will likely come down to a few reasons: It is appropriate for your data type, and, more commonly you could successfully download and run it. The software does become outdated and overtaken by something else - often they state this in the GitHub page, but not always.
 
