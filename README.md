@@ -48,10 +48,10 @@ This is not a tutorial of how to analyse your metagenomic data, or how to work i
 7. [Taxonomic classification of raw reads, contigs and MAGs</b>](#sec7)</br>
     7.1. [Raw reads and contig taxonomy](#sec7.1)</br>
     7.2. [MAG taxonomy](#sec7.2)</br>
-8. [Appendix](#sec8)</br>
-    8.1. [Building `conda` environments for each step](#sec8.1)</br>
-    8.2. [Building complex/nested loops](#sec8.2)</br>
-    8.3. [Additional software to consider](#sec8.3)</br>
+8. [Appendix](#sec9)</br>
+    8.1. [Building `conda` environments for each step](#sec9.1)</br>
+    8.2. [Building complex/nested loops](#sec9.2)</br>
+    8.3. [Additional software to consider](#sec9.3)</br>
 
 ---
 <div style="page-break-after: always;"></div>
@@ -126,7 +126,7 @@ MAGs can be improved by re-assembling them (look to <i>MetaWRAPs bin_reassembly<
 <a name="sec1"></a>
 ## <b>1. Raw reads quality control</b>
 <p align="center">
-  <img src="/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/qc_pipe.png"/>
+  <img src="figures/qc_pipe.png"/>
 </p>
 
 This section is only interested in the quality control of you (meta)genomic data. The QC step is incredibly important to everything that follows. And it should be done with a lot of consideration to what is going to happen downstream. Dont be affraid to come back and re-assess your read quality if you notice strange things happening with your data.
@@ -158,11 +158,11 @@ The following can be utilised on both Illumina and MinION sequence data. When yo
 ```
 Once the output <i>FastQC</i> will be a HTML file for each read file that you can open into your web browser and look at the quality of metagenomic sequences.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/fastqc.png)
+![Logo](figures/fastqc.png)
 
 Since this will generate a lot of files and looking through each one individually is an inconvenience, you can aggragate them all with <i>MultiQC</i>. This makes it easier to get an overall idea of the data and identiy  parameters that apply to the dataset as a whole. Generally speaking, if you are going to do something like a co-assembly you will want all your reads of a similar length and quality.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/multiQC.png)
+![Logo](figures/multiQC.png)
 
 <a name="sec1.3"></a>
 ### <u>1.3. Illumina data</u>
@@ -199,7 +199,7 @@ If after running <i>BBDuk</i>, or any other read QC software, there are still so
 
 One example of where this can happen is with a polyG tail on your reverse read, this would look like this in <i>fastQC</i>. This is common to Illumina data, but just because you have run a powerfull tool that QC-es your reads in many ways, doesn't mean that those are the best quality data to proceed with. Check again with <i>fastQC</i> after QC/before assembly.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/polyG_tail.png)
+![Logo](figures/polyG_tail.png)
 
 Poly-G tails need to be remove as they will impact on your assembly, this can be done with <i>fastp</i>:
 ```bash
@@ -261,7 +261,7 @@ cat rep_ref_refseq.txt | awk -F '\t' '{print $20}' \
     | sed -E 's/^https(.*)(\/.*)/wget ftp\1\2\2_genomic.fna.gz/g' > rep_ref_refseq.sh
 
 ```
-Once you have all the genomes, they will be in their own individual fasta file, it is good to run checkM in order to identify potentially contaminated bacterial genomes and decide wether or not to keep them for downstream analysis. <i>CheckM</i> can do this for you.
+Once you have all the genomes, they will be in their own individual fasta file, it is good to run checkM to identify potentially contaminated bacterial genomes and decide whether or not to keep each genome for downstream analysis. <i>CheckM2</i> can perform this for you.
 ```bash
   checkm lineage_wf <bin folder> <output folder> -t 64
 ```
@@ -273,9 +273,7 @@ This will generate a table that will give you the completeness and contamination
 |genome2|p_Firmicutes|100|295|158|0|293|1|1|0|0|100.0|1.9|
 |genome3|f_Rhodobactereacea|46|654|332|2|610|32|9|1|0|99.6|11.3|
 
-Generally speaking you want your genome Completeness to be >75% and the contamination <10%. In the example above you would keep genome1 and genome2 but remove genome3 as it has contamination above 10%.
-
-If you plan to process a large number of genomes, you may wish to break these into smaller batches. On a 64GB machine running 1,000 genomes at a time with 40 threads works well.
+Generally speaking, you want your genome Completeness to be >75% and the contamination <10%. In the example above you would keep genome1 and genome2 but remove genome3 as it has contamination above 10%.
 
 #### Downloading reads from the SRA database:
 Determine the SRR number and download the data using the <i>SRA Toolkit</i>:
@@ -286,25 +284,23 @@ After you have downloaded the data, you need to convert it from SRAs compressed 
 ```bash
 fastq-dump --outdir path/to/ouput/fastq/ --split-files path/to/sra/SRR925811.sra
 ```
-If its Illumina data you are downloading, this should produce two fastq files (one for R1 and one for R2), and only one for Nanopore/IonTorent.
+If it's Illumina data you are downloading, this should produce two fastq files (one for R1 and one for R2), and only one for Nanopore/IonTorent.
 If you just want to download X number of raw (fastq) reads to standard output from a particular run you can use a command like the following. This can be useful to just take a quick look at some reads, or obtain some reads for testing purposes or just check whether the SRA toolkit is even working for you.
 ```bash
 fastq-dump -X 5 -Z SRR925811
 ```
-To run the whole process is a single long pipe, you could try the following:
+To run the whole process in a single long pipe, you could try the following:
 ```bash
-esearch -db sra -query | efetch --format runinfo | cut -d ',' -f 1 | grep SRR \
-    | xargs fastq-dump --split-files --bzip2
+esearch -db sra -query | efetch --format runinfo | cut -d ',' -f 1 | grep SRR \ | xargs fastq-dump --split-files --bzip2
 ```
 You can then proceed to QC this metagenomic data as described above depending on the sequencing platform the data originated from.
-
 
 ---
 <div style="page-break-after: always;"></div>
 
 <a name="sec2"></a>
 ## <b>2. (Meta)genomic Assembly</b>
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/assembly_pipe.png)
+![Logo](figures/assembly_pipe.png)
 
 While both types of data again need to be assembled differently (with the exception of hybrid assemblies)
 
@@ -411,7 +407,7 @@ QUAST may be used to generate summary statistics (N50, maximum contig length, GC
 ```
 QUAST will generate a HTML file that you can inspect to see the results of its assesment.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/metaQUAST.png)
+![Logo](figures/metaQUAST.png)
 
 #### <u>Size filter contigs</u>:
 Contigs filtered to remove contigs less that 1kb. <i>seqkit</i> is a multifunctional/crossplaotform tool that is useful to get statistics on your contigs and remove reads less than 1Kb.
@@ -455,7 +451,7 @@ Repeat graphs produced by Flye could be visualized using Bandage. Repeat graph b
 ## <b>3. Mapping reads to contigs</b>
 Long and short-read mappers cant really be used interchangably, so again nanopore and illumina data should be handled seperately here.
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/mapping_pipe.png)
+![Logo](figures/mapping_pipe.png)
 
 <a name="sec3.2"></a>
 ### <u>3.2. Software</u>
@@ -512,7 +508,7 @@ With a sorted and index `BAM` file you can extract coverage information that wil
 ## <b>4. Binning metagenomic contigs/recovering MAGs</b>
 Here 3 ways to bin your metagenome bins are described. Each have their own advantages and disadvantages. Finally Also describes is MetaWRAP's `bin_refinement` module that will take bins from multiple binners and create refined bins based on a quality measures (completenes and contamination).
 
-![Logo](/Users/poppybest/Documents/Work/PostDoc_UoM_2022/Projects/scripts/Metagenomics_pipelines/figures/binning_pipe.png)
+![Logo](figures/binning_pipe.png)
 
 <a name="sec4.1"></a>
 ### <u>4.1. Software</u>
@@ -892,8 +888,28 @@ Running MetaWRAPS bin classification and abundace estimator:
 <div style="page-break-after: always;"></div>
 
 <a name="sec8"></a>
-## <b>Appendix</b>
+## <b>Usefult scripts</b>
+I have compiled a collection of scripts to perform some base functions which can be found in `bin/`. These scripts are meant to be run on an HPC-SLURM system, and as such they are ready for immediate use by sending the script to SLURM - `sbatch script.sh -i $INPUT -o $OUTPUT`. If you do not use a SLURM system or have a separate one, you will need to remove SLURM parameters from the start of the script. They are as follows (in no particular order):
+```bash
+iq-tree_phylogeny.sh -i genomes.fasta
+iq-tree_phylogeny.sh -i genome.fasta -p prefix
+```
 <a name="sec8.1"></a>
+### <u>Phylogeny with IQ-Tree</u>
+This script performs multiple sequence alignment with [MAFFT](https://mafft.cbrc.jp/alignment/software/linux.html), trims ends with [TrimAl](https://github.com/inab/trimal) and reconstructs phylogeny using a GTR model with [IQ-TREE](https://github.com/Cibiv/IQ-TREE)
+```bash
+iq-tree_phylogeny.sh -i genome1.fasta
+iq-tree_phylogeny.sh -i genome1.fasta -p prefix # add a prefix name to output
+# if you just want to reconstruct the tree and not the alignment - for example you job timed-out
+iq-tree_phylogeny.sh -i genomes.fasta -R
+```
+
+---
+<div style="page-break-after: always;"></div>
+
+<a name="sec9"></a>
+## <b>Appendix</b>
+<a name="sec9.1"></a>
 ### <u>Appendix: `conda` environments for each step</u>
 When building conda environments, its important to not overload them with too many software, as what can happens is the dependencies of softwareA you donwload to the environment may conflict with softwareB, and now you can no longer properly run softwareB. Bulding and breaking down conda envs is normal, you many have to do this multiple times before you arrive at a good ballance.
 When you have created your conda environment, its good to create a `.yaml` file of the environment - its basically the recipe of how that env is made, and if you mess up the enviornment a week late, you can just use that `.yaml` file to rebuild it env back to the functioning state.
@@ -956,9 +972,9 @@ These are some of the environments that have been working for me for a while.
 conda create -n db_downloading -c bioconda sra-tools entrez-direct seqkit -y
 ```
 
-<a name="sec8.2"></a>
+<a name="sec9.2"></a>
 ### <u>Appendix: Building complex loops</u>
-In much of the code examples of the software used for the analysis I have just demonstrated it with a single sample (i.e. sample001.fasta). This is infrequently how you will be analysing metagenomic data, you will nearly always to work with multiple samples. Loops are an easier way to telling the computer to loop through all the files that meet a certain parameter and run the same analysis on them.
+In many of the code examples of the software used for the analysis, I have just demonstrated it with a single sample (i.e. sample001.fasta). This is infrequently how you will be analysing metagenomic data, you will nearly always to work with multiple samples. Loops are an easier way to tell the computer to loop through all the files that meet a certain parameter and run the same analysis on them.
 
 A simple look  will look like this:
 ```bash
@@ -970,7 +986,7 @@ A simple look  will look like this:
 More often your goal will be a bit more complicated, and possibly require renaming the output to include intermediate files or a different name to the end file. You change modify the loop using `basename`. The advatange of basename is that it will ignore the entire path of the file when you ask it it `echo` (i.e. print) the variable we have called `name#`.
 
 ```bash
-INPUT
+# INPUT
   for file in path/to/file/*.fasta; do
     name1=$(basename $file .fasta)
     echo $name2
@@ -979,7 +995,7 @@ INPUT
     echo $name3
   done
 
-OUTPUT
+# OUTPUT
   $ echo $name2
   # sample001
   $ echo $name2
@@ -988,7 +1004,7 @@ OUTPUT
 The way basename is structured is that you specify which part of the name - seperated by a period (`.`) - is to be removed from the variable `name`.
 For example for the file: `sample001.final.contigs.fasta`, running `name=$(basename $file .final.contigs.fasta); echo $name` would print the output `sample001`. Likewise, running `name=$(basename $file contigs.fasta); echo $name` would print  `sample001.final`. So this is great for stacking information to you sample name that informs you at what stage of the analysis that particular sample is at.
 
-Another useful feature of using `basename` is that it removes the entire path of the where `sample001.fasta` is, but still retains that information, so moving the outputs of your files around while simultaneously renaming them becomes straight forward.
+Another useful feature of using `basename` is that it removes the entire path of `sample001.fasta`, but still retains file information, so moving the outputs of your files around while simultaneously renaming them becomes straightforward.
 ```bash
   for file in path/to/file/*.fasta; do
     name1=$(basename $file .fasta)
@@ -996,9 +1012,9 @@ Another useful feature of using `basename` is that it removes the entire path of
   done
 ```
 
-<a name="sec8.3"></a>
+<a name="sec9.3"></a>
 ### <u>Appendix: Additional software to consider</u>
-Your choice in using a certain software will likely come down to a few reasons: It is approapriate for your data and you could sucesfully download and run it. Software does become outdated and overtaken by something else - often they state this in the gihub page, but not always.
+Your choice in using a certain software will likely come down to a few reasons: It is appropriate for your data type, and, more commonly you could successfully download and run it. The software does become outdated and overtaken by something else - often they state this in the GitHub page, but not always.
 
 | Step | Software | Link |
 | ------ | --------------| --------------|
