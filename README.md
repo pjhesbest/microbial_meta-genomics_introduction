@@ -72,16 +72,11 @@ One essential element of your analysis is keeping a strict file structure (It ca
 
 ```
 Project |  README.txt # summary of project and data contained within, the stage/status of the project, etc..
-        |  data     | raw_reads | Sample001_R1.fastq.gz
+        |  data         | raw_reads | Sample001_R1.fastq.gz
                                     | Sample001_R2.fastq.gz
-                                    | Sample002_R1.fastq.gz
-                                    | Sample00_R2.fastq.gz
                         | QC_reads  | Sample001_CLEAN-READS_R1.fastq.gz
                                     | Sample001_CLEAN-READS_R2.fastq.gz
-                                    | Sample002_CLEAN-READS_R1.fastq.gz
-                                    | Sample002_CLEAN-READS_R2.fastq.gz
         |  analysis     | assembly  | Sample001_contigs.fa
-                                    | Sample002_contigs.fa
                         | mapping   | Sample001_contigs.bam
                                     | Sample001_contigs.bam.bai
                         | binning
