@@ -72,7 +72,7 @@ One essential element of your analysis is keeping a strict file structure (It ca
 
 ```
 Project |  README.txt # summary of project and data contained within, the stage/status of the project, etc..
-        |  raw_data     | raw_reads | Sample001_R1.fastq.gz
+        |  data     | raw_reads | Sample001_R1.fastq.gz
                                     | Sample001_R2.fastq.gz
                                     | Sample002_R1.fastq.gz
                                     | Sample00_R2.fastq.gz
